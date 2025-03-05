@@ -17,14 +17,15 @@ class ElisStatus extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.black : Color(0xFFD8D8D8),
+        color: isDarkMode ? Color(0XFF404040) : Color(0xFFD8D8D8),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         "$progress/$total",
         style: TextStyle(
           color: isDarkMode ? Colors.white : Colors.black,
-          fontSize: 10,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

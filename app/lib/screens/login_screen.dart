@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await Requests.post(
-      "http://192.168.0.27:5000/api/auth/login",
+      "http://5.249.164.180:5000/api/auth/login",
       {"email": email, "password": password},
       null,
     );

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class ElisSignButton extends StatelessWidget {
   final String text;
-  final GestureTapCallback? onTap;
+  final GestureTapCallback? onPressed;
   final bool isDarkMode;
   const ElisSignButton({
     super.key,
     required this.isDarkMode,
     required this.text,
-    this.onTap,
+    this.onPressed,
   });
 
   @override
@@ -16,7 +16,7 @@ class ElisSignButton extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: onPressed,
       child: Container(
         width: screenWidth,
         padding: EdgeInsets.all(20),
