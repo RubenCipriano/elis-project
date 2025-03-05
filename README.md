@@ -23,7 +23,7 @@ Before setting up the backend, make sure you have the following installed:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/elis-project.git
+   git clone https://github.com/RubenCipriano/elis-project.git
    cd elis-project/server
    ```
    
@@ -63,7 +63,7 @@ Before setting up the frontend, make sure you have the following installed:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/elis-project.git
+   git clone https://github.com/RubenCipriano/elis-project.git
    cd elis-project/server
    ```
    
