@@ -45,7 +45,7 @@ class ServiceCard extends StatelessWidget {
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 12,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 5),
@@ -53,21 +53,21 @@ class ServiceCard extends StatelessWidget {
                 clientName,
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               ),
               Text(
                 route,
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               ),
               Text(
                 address,
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               ),
               const SizedBox(height: 10),
