@@ -1,0 +1,11 @@
+<button class="custom-button" (click)="handleClick()" [disabled]="isLoading || isSuccess">
+    <span *ngIf="!isLoading && !isSuccess">{{ text }}</span>
+  
+    <!-- Loading Animation -->
+    <div *ngIf="isLoading || isSuccess" class="loading-animation">
+      <div class="loading-dot" [ngClass]="!isSuccess ? 'left' : 'right'">
+        <div *ngIf="isSuccess" class="success-icon">✔</div>
+      </div>
+    </div>
+  </button>
+  

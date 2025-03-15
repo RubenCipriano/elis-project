@@ -39,6 +39,8 @@ class _LoginPageState extends State<LoginPage> {
       null,
     );
 
+    print(response);
+
     await Future.delayed(const Duration(seconds: 1)); // Simula o login
 
     if (response != null) {

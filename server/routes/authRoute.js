@@ -9,6 +9,10 @@ const router = express.Router();
 // Rota de login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  if(!email) return res.status(400).json({ message: 'Não existe email' }); 
+
+  if(!password) return res.status(400).json({ message: 'Não existe password' }); 
+
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: 'Credenciais inválidas' });
 

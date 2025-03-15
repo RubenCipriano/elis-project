@@ -16,6 +16,8 @@ class Requests {
         headerRequest['Authorization'] = accessToken;
       }
 
+      print({url, headerRequest, json.encode(encondedRequest)});
+
       final response = await http.post(
         url,
         headers: headerRequest,

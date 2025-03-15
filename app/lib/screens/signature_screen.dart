@@ -39,51 +39,51 @@ class _SignatureScreenState extends State<SignatureScreen> {
     return Scaffold(
       backgroundColor: isDarkMode ? Color(0xFF232323) : Color(0xFFFFFFFF),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Navbar
-              Navbar(label: "Assinatura", isDarkMode: isDarkMode),
-              const SizedBox(height: 30),
+        child: Column(
+          children: [
+            // Navbar
+            Navbar(label: "Assinatura", isDarkMode: isDarkMode),
+            const SizedBox(height: 30),
 
-              // Título da tela
-              Text(
-                "Por favor, assine abaixo:",
-                style: TextStyle(
-                  color: isDarkMode ? Colors.white : Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+            // Título da tela
+            Text(
+              "Por favor, assine abaixo:",
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 20),
 
-              // Área de assinatura
-              Signature(
+            // Signature widget with dynamic height
+            Expanded(
+              child: Signature(
                 controller: _controller,
-                height: 400,
+                height:
+                    double
+                        .infinity, // This makes the Signature widget take up all available space
                 backgroundColor: isDarkMode ? Colors.white : Colors.black,
               ),
-              const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 20),
 
-              // Botão para confirmar a assinatura
-              ElisSignButton(
-                isDarkMode: isDarkMode,
-                text: "Confirmar Assinatura",
-                onPressed: () {
-                  if (_controller.isNotEmpty) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DashboardScreen(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
+            // ElisSignButton positioned at the bottom
+            ElisSignButton(
+              isDarkMode: isDarkMode,
+              text: "Confirmar Assinatura",
+              onPressed: () {
+                if (_controller.isNotEmpty) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
