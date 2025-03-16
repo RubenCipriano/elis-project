@@ -1,0 +1,28 @@
+.donut-chart {
+    width: 350px;
+    height: 100%;
+    padding: 40px 60px;
+    min-width: 200px;
+}
+
+.chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.tooltip {
+    position: absolute;
+    background: black;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0.5s;
+    opacity: 1;
+}
+

@@ -1,12 +1,26 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../components/navbar-component/navbar.component';
+import { NavbarModule } from '../../components/navbar-component/navbar.module';
+import { CircleProgressModule } from '../../components/circle-progress/circle-progress.module';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [NavbarComponent],
+  imports: [NavbarModule, CircleProgressModule],
   templateUrl: './dashboard-page.component.html',
-  styleUrl: './dashboard-page.component.scss'
+  styleUrl: './dashboard-page.component.scss',
+  standalone: true
 })
 export class DashboardPageComponent {
+  clientsData = [
+    { percentage: 100, color: '#00C5CB', data: 'Clients in the App' }
+  ];
 
+  contractsData = [
+    { percentage: 100, color: '#00C5CB', data: 'Contracts in the App' }
+  ];
+
+  courierData = [
+    { percentage: 70, color: '#00C5CB', data: 'Couriers Working' },
+    { percentage: 20, color: '#E8CB25', data: 'Couriers In Progress' },
+    { percentage: 10, color: '#E3000B', data: 'Couriers Idle' },
+  ];
 }
