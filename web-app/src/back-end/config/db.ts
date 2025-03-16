@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 // Function to connect to MongoDB
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env['MONGO_URI'] as string;
+    const mongoURI = process.env['MONGO_URI'] || "mongodb://localhost:27017/elis-database" as string;
 
     if (!mongoURI) {
       throw new Error('MONGO_URI não está definido no arquivo .env');
