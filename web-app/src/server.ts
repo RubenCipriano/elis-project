@@ -7,6 +7,10 @@ import {
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import connectDB from './back-end/config/db';
+import authRoutes from './back-end/routes/authRoute'
+import userRoutes from './back-end/routes/userRoute'
+import dotenv from 'dotenv';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -14,17 +18,17 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+dotenv.config();
+
+// Configurações iniciais
+app.use(express.json());
+
+// Conexão com o MongoDB
+connectDB();
+
+// Rotas
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 /**
  * Serve static files from /browser
