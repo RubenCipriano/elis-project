@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
   providedIn: 'root',
 })
 export class AuthService {
-  private authUrl = `http://localhost:${process.env['PORT'] || '80'}/api/auth/login`; // Adjust backend URL
+  private authUrl = '/api/auth/login'; // Adjust backend URL
   private tokenKey = 'auth_token';
   private userSubject = new BehaviorSubject<boolean>(false);
 
