@@ -24,7 +24,7 @@ Before setting up the backend, make sure you have the following installed:
 
    ```bash
    git clone https://github.com/RubenCipriano/elis-project.git
-   cd elis-project/server
+   cd elis-project/web-app
    ```
    
 2. **Install dependencies**
@@ -39,13 +39,18 @@ Before setting up the backend, make sure you have the following installed:
    ```bash
    MONGO_URI=mongodb://localhost:27017/elis-database
    JWT_SECRET=<JWTSecret>
+   PORT=[port]
    ```
 
 4. **Start the server**
 
    ```bash
-   npm start
+   npm start build && npm start serve:ssr:web-app
    ```
+
+5. **Server Starting**
+
+The management website is going to be opened at the default port 4000 but it can be changed to any port you would like just changing the port on the .env file, the app itself is using dynamic urls so the domain u using in the backend will be the domain of the calls itself, you can change it going on services...
 
 ## Frontend (Dart / Flutter)
 
