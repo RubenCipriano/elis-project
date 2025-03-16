@@ -20,7 +20,7 @@ export class DashboardPageComponent {
 
   courierData = [
     { percentage: 70, color: '#00C5CB', data: 'Couriers Working' },
-    { percentage: 20, color: '#E8CB25', data: 'Couriers In Progress' },
-    { percentage: 10, color: '#E3000B', data: 'Couriers Idle' },
+    { percentage: 20, color: '#02969A', data: 'Couriers In Progress' },
+    { percentage: 10, color: '#005659', data: 'Couriers Idle' },
   ];
 }
