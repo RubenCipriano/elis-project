@@ -20,10 +20,7 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-//connectDB();
-
-// Json Body
-app.use(express.json());
+connectDB();
 
 // API Routes - make sure these are defined first
 //app.use('/api/auth', authRoutes);
@@ -63,6 +60,13 @@ app.use('/**', (req, res, next) => {
     )
     .catch(next);
 });
+
+// Json Body
+app.use(express.json());
+
+// Define API routes here (after JSON middleware)
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 /**
  * Start the server if this module is the main entry point.

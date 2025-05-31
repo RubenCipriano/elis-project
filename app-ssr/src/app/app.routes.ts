@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { AuthGuard } from './guards/auth.guard';
-import { MapPageComponent } from './pages/map-page/map-page.component';
 import { ClientOnlyGuard } from './guards/client.guard';
 
 export const routes: Routes = [

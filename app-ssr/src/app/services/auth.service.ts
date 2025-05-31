@@ -1,7 +1,8 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, Optional, REQUEST } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { Request } from 'express';
 
 @Injectable({
   providedIn: 'root',
@@ -9,18 +10,18 @@ import { isPlatformBrowser } from '@angular/common';
 export class AuthService {
   private authUrl = '/api/auth/login';
   private tokenKey = 'auth_token';
-  private userSubject = new BehaviorSubject<boolean | null>(null); // Start with null
+  private userSubject = new BehaviorSubject<boolean | null>(null);
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Optional() @Inject(REQUEST) private request: Request // for SSR only
   ) {
-    if (isPlatformBrowser(this.platformId)) {
-      const token = this.getToken();
-      this.userSubject.next(!!token); // Only update when we know the token status
-    }
+    const token = this.getToken();
+    this.userSubject.next(!!token);
   }
 
+  // --- LOGIN ---
   async login(credentials: { email: string; password: string }): Promise<any> {
     try {
       const response = await firstValueFrom(
@@ -28,10 +29,10 @@ export class AuthService {
       );
 
       if (isPlatformBrowser(this.platformId)) {
-        this.storeToken(response.token);
-        this.userSubject.next(true);
+        this.setCookie(this.tokenKey, response.token, 1); // 1 day
       }
 
+      this.userSubject.next(true);
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -39,33 +40,64 @@ export class AuthService {
     }
   }
 
-  logout() {
+  // --- LOGOUT ---
+  logout(): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.tokenKey);
-      this.userSubject.next(false);
+      this.deleteCookie(this.tokenKey);
     }
+
+    this.userSubject.next(false);
   }
 
+  // --- IS AUTHENTICATED ---
   isAuthenticated(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return !!localStorage.getItem(this.tokenKey);
-    }
-    return false; // On SSR, return false
+    return !!this.getToken();
   }
 
+  // --- GET TOKEN ---
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.tokenKey);
+      return this.getCookie(this.tokenKey);
+    }
+
+    console.log(this.request.header("cookie"))
+    console.log(this.request.rawHeaders)
+
+    // SSR - read from request cookie header
+    if (this.request?.headers?.cookie) {
+      const cookies = this.request.headers.cookie.split(';');
+      const tokenCookie = cookies.find(c => c.trim().startsWith(`${this.tokenKey}=`));
+      if (tokenCookie) {
+        return tokenCookie.split('=')[1];
+      }
+    }
+
+    return null;
+  }
+
+  // --- Cookie Utils (Browser Only) ---
+  private setCookie(name: string, value: string, days: number): void {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  private getCookie(name: string): string | null {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (const c of ca) {
+      let trimmed = c.trim();
+      if (trimmed.startsWith(nameEQ)) {
+        return trimmed.substring(nameEQ.length);
+      }
     }
     return null;
   }
 
-  private storeToken(token: string) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.tokenKey, token);
-    }
+  private deleteCookie(name: string): void {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   }
 
+  // --- Observable for User State ---
   get user$() {
     return this.userSubject.asObservable();
   }

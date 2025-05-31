@@ -13,6 +13,6 @@ const ServiceSchema: Schema<IService> = new Schema({
 });
 
 // Create Mongoose model with the interface
-const Service: Model<IService> = mongoose.model<IService>('Service', ServiceSchema);
+const Service: Model<IService> = mongoose.model<IService>('Service', ServiceSchema) || mongoose.model<IService>('Service', ServiceSchema);
 
 export default Service;

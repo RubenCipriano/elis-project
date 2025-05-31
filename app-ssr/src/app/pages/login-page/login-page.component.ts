@@ -21,9 +21,10 @@ export class LoginPageComponent {
     email: string = '';
     password: string = '';
 
-    constructor(private authService: AuthService,private router: Router) {
-        if(authService.isAuthenticated())
-            router.navigate(["/"]);
+    constructor(private authService: AuthService, private router: Router) {
+        if (authService.isAuthenticated()) {
+            router.navigate(['/']); // redirect to dashboard
+        }
     }
 
     
@@ -39,11 +40,8 @@ export class LoginPageComponent {
         try {
 
             await this.authService.login({email: this.email, password: this.password});
-
-            setTimeout(() => {
-                this.router.navigate(["/"]);
-            }, 1000);
             
+            this.router.navigate(["/"]);
             
         } catch (error) {
             console.error('Error:', error);  // Handle error
