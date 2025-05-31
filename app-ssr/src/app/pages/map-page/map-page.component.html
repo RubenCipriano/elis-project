@@ -1,0 +1,25 @@
+<div class="map-screen">
+    <div class="right-panel" [ngClass]="{'show': showRightSidebar}">
+        <app-driver-card 
+            *ngFor="let driver of drivers" 
+            class="d-flex align-items-center justify-content-center"
+            [driver]="driver"
+            (click)="focusOnDriver(driver)"
+        ></app-driver-card>
+
+        <div class="hide-show-btn" (click)="showRightSidebar = !showRightSidebar">
+            <div *ngIf="!showRightSidebar">&lt;&lt;</div>
+            <div *ngIf="showRightSidebar">&gt;&gt;</div>
+        </div>
+    </div>
+
+    <app-driver-modal
+        *ngIf="selectedDriver"
+        [data]="selectedDriver"
+        (cancel)="selectedDriver = null"
+        (save)="onSaveDriver($event)"
+    ></app-driver-modal>
+
+    <div id="map"></div>
+</div>
+

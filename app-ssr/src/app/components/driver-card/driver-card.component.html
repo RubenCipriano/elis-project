@@ -1,0 +1,20 @@
+<div class="driver-card row">
+  <div class="profile-pic col-3 d-flex align-items-center justify-content-center">
+    <img class="img-fluid" src="https://purepng.com/public/uploads/large/purepng.com-vantruckvehicletransportwhitevanbuscargodeliveryautocommercialcourier-981525067770rld6a.png" alt="{{ driver.vehicle }}'s profile picture">
+  </div>
+
+  <div class="driver-info col-7">
+    <strong>{{ driver.name }}</strong>
+    <div>{{ driver.vehicle }}</div>
+    <div>Rota {{ driver.route }}</div>
+
+    <button class="service-btn">Serviços</button>
+    <div class="counter">{{ driver.servicesCompleted }}/{{ driver.totalServices }}</div>
+  </div>
+  
+  <div class="col-2 d-flex align-items-center justify-content-center">
+    <div class="arrow-btn">
+        <svg width="20px" height="20px" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#ffffff" d="M338.752 104.704a64 64 0 000 90.496l316.8 316.8-316.8 316.8a64 64 0 0090.496 90.496l362.048-362.048a64 64 0 000-90.496L429.248 104.704a64 64 0 00-90.496 0z"></path></g></svg>
+    </div>
+  </div>
+</div>

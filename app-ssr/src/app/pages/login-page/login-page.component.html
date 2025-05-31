@@ -1,0 +1,8 @@
+<div class="container-fluid d-flex align-items-center justify-content-center">
+    <div class="form-container">
+        <input-component label="Email / Username" [value]="email"></input-component>
+        <input-component label="Password" [value]="password"></input-component>
+        <button class="button btn forget-password">Forgot your password</button>
+        <primary-button-component [callbackClick]="loginClickHandle" text="Login"></primary-button-component>
+    </div>
+</div>

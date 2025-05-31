@@ -1,0 +1,28 @@
+<div class="driver-modal">
+  <div class="modal-backdrop"></div>
+
+  <div class="modal-box">
+    <div class="modal-content">
+      <!-- LEFT: Image Placeholder -->
+      <div class="image-box">
+        <div class="image-preview">Image</div>
+      </div>
+
+      <!-- RIGHT: Form fields -->
+      <div class="form-box">
+          <ng-container *ngFor="let key of objectKeys(data)">
+              <input-component 
+                [label]="key | titlecase" 
+                [value]="data[key]" 
+                (valueChange)="data[key] = $event"></input-component>
+          </ng-container>
+
+        <div class="actions">
+          <button class="delete" (click)="delete.emit()">DELETE</button>
+          <button class="cancel" (click)="cancel.emit()">CANCEL</button>
+          <button class="save" (click)="onSave()">SAVE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
