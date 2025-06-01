@@ -6,11 +6,10 @@ import {
   NgZone,
   OnInit
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NavbarModule } from '../../components/navbar-component/navbar.module';
 import { DriverCardModule } from '../../components/driver-card/driver-card.module';
 import { DriverModalComponent } from '../../components/driver-modal/driver-modal.component';
-import * as L from 'leaflet';
 import { Driver } from '../../interfaces/driver.interface';
 import { DriverSocketService } from '../../services/driver-socket.service';
 
@@ -23,117 +22,94 @@ import { DriverSocketService } from '../../services/driver-socket.service';
 })
 export class MapPageComponent implements OnInit, AfterViewInit {
   map: any;
-
+  maplibregl: any;
   drivers: Driver[] = [];
-
   selectedDriver: any = null;
-
   showRightSidebar = true;
+  markers: { [key: string]: any } = {};
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private ngZone: NgZone, private driverSocketService: DriverSocketService) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private ngZone: NgZone,
+    private driverSocketService: DriverSocketService
+  ) {}
 
   ngOnInit(): void {
-    this.driverSocketService.drivers$.subscribe(newDrivers => {
-      console.log(newDrivers)
-      const updatedDriverIds = new Set();
+    if (isPlatformBrowser(this.platformId)) {
+      this.driverSocketService.drivers$.subscribe(newDrivers => {
+        const updatedIds = new Set();
 
-      newDrivers.forEach(newDriver => {
-        updatedDriverIds.add(newDriver.driverId);
+        newDrivers.forEach(driver => {
+          updatedIds.add(driver.driverId);
 
-        const existing = this.drivers.find(d => d.driverId === newDriver.driverId);
+          if (this.markers[driver.driverId]) {
+            // Update marker
+            const marker = this.markers[driver.driverId];
+            marker.setLngLat([driver.position.lng, driver.position.lat]);
+          } else {
+            // Create new marker
+            const el = document.createElement('div');
+            el.className = 'driver-marker';
 
-        if (existing) {
-          // Update existing fields
-          Object.assign(existing, newDriver);
+            el.addEventListener('click', () => {
+              this.ngZone.run(() => this.focusOnDriver(driver, true));
+            });
 
-          // Update marker position
-          if (existing.marker) {
-            existing.marker.setLatLng([newDriver.position.lat, newDriver.position.lng]);
+            const marker = new this.maplibregl.Marker(el)
+              .setLngLat([driver.position.lng, driver.position.lat])
+              .addTo(this.map);
+
+            this.markers[driver.driverId] = marker;
+            this.drivers.push(driver);
           }
-        } else {
-          // New driver, add to list and create marker
-          const circle = L.circleMarker([newDriver.position.lat, newDriver.position.lng], {
-            radius: 8,
-            fillColor: '#00BCD4',
-            color: '#007C91',
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-          }).addTo(this.map);
+        });
 
-          newDriver.marker = circle;
-
-          circle.on('click', () => {
-            this.ngZone.run(() => this.focusOnDriver(newDriver, true));
-          });
-
-          this.drivers.push(newDriver);
-        }
+        // Clean up removed markers
+        this.drivers = this.drivers.filter(driver => {
+          const exists = updatedIds.has(driver.driverId);
+          if (!exists) {
+            this.markers[driver.driverId]?.remove();
+            delete this.markers[driver.driverId];
+          }
+          return exists;
+        });
       });
-
-      // Optional: Remove drivers that no longer exist
-      this.drivers = this.drivers.filter(driver => {
-        const stillExists = updatedDriverIds.has(driver.driverId);
-        if (!stillExists && driver.marker) {
-          this.map.removeLayer(driver.marker); // Clean up marker
-        }
-        return stillExists;
-      });
-    });
+    }
   }
 
-  
-  focusOnDriver(driver: any, openModal: boolean = false) {
-    if (openModal) {
-      this.selectedDriver = driver;
+  async ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const maplibregl = await import('maplibre-gl');
+      this.maplibregl = maplibregl.default; // <- aqui
 
-      console.log(this.selectedDriver)
+      this.map = new this.maplibregl.Map({
+        container: 'map',
+        style: '/api/maptiller/streets',
+        center: [-9.1399, 38.7169],
+        zoom: 14
+      });
+
+      this.map.on('load', () => {
+        this.map.resize();
+      });
     }
+  }
 
-    // Reset all markers
-    this.drivers.forEach(d => {
-      if(d.marker)
-        d.marker.setStyle({
-          radius: 8,
-          fillColor: '#00BCD4',
-          color: '#007C91'
-        });
+
+  focusOnDriver(driver: any, openModal: boolean = false) {
+    if (openModal) this.selectedDriver = driver;
+
+    this.map.flyTo({
+      center: [driver.position.lng, driver.position.lat],
+      zoom: 18
     });
-
-    // Highlight selected marker
-    driver.marker.setStyle({
-      radius: 12,
-      fillColor: '#FF5722', // Highlight color
-      color: '#E64A19'
-    });
-
-    this.map.setView([driver.position.lat, driver.position.lng], 20);
   }
 
   onSaveDriver(driver: any) {
-    
     const index = this.drivers.findIndex(d => d.driverId === driver.id);
     if (index !== -1) {
       this.drivers[index] = driver;
     }
-
     this.selectedDriver = null;
-  }
-
-  ngAfterViewInit(): void {
-    this.map = L.map('map', {
-      center: [38.7169, -9.1399],
-      zoom: 14
-    });
-
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
-    }).addTo(this.map);
-
-    // Important: wait for map to fully load, then trigger resize
-    setTimeout(() => {
-      this.map.invalidateSize();
-    }, 0);
   }
 }

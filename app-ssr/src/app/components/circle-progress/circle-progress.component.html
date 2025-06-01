@@ -1,31 +1,33 @@
-    <div class="chart-container">
-        <svg viewBox="0 0 120 120" class="donut-chart" (mouseleave)="onMouseLeave()">
-        <g *ngFor="let segment of getSegments()">
-            <circle
-            cx="60"
-            cy="60"
-            r="50"
-            fill="none"
-            [attr.stroke]="segment.color"
-            stroke-width="15"
-            [attr.stroke-dasharray]="segment.dashArray"
-            [attr.stroke-dashoffset]="segment.offset"
-            (mouseenter)="onMouseEnter($event, segment.data)"
-            ></circle>
-        </g>
-        <text x="60" y="65" text-anchor="middle" font-size="16" fill="black" font-weight="bold">
-            {{ centerText }}
-        </text>
-        </svg>
-    
-        <!-- Tooltip -->
-        <div
-            *ngIf="showTooltip"
-            class="tooltip"
-            [style.left.px]="tooltipX"
-            [style.top.px]="tooltipY"
-        >
-        {{ tooltipData }}
-        </div>
+<div class="chart-container">
+  <svg viewBox="0 0 120 120" class="donut-chart" (mouseleave)="onMouseLeave()">
+    @for (segment of getSegments(); track segment) {
+      <g>
+        <circle
+          cx="60"
+          cy="60"
+          r="50"
+          fill="none"
+          [attr.stroke]="segment.color"
+          stroke-width="15"
+          [attr.stroke-dasharray]="segment.dashArray"
+          [attr.stroke-dashoffset]="segment.offset"
+          (mouseenter)="onMouseEnter($event, segment.data)"
+        ></circle>
+      </g>
+    }
+    <text x="60" y="65" text-anchor="middle" font-size="16" fill="black" font-weight="bold">
+      {{ centerText }}
+    </text>
+  </svg>
+
+  <!-- Tooltip -->
+  @if (showTooltip) {
+    <div
+      class="tooltip"
+      [style.left.px]="tooltipX"
+      [style.top.px]="tooltipY"
+      >
+      {{ tooltipData }}
     </div>
-    
+  }
+</div>

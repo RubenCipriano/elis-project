@@ -12,7 +12,7 @@ export class ClientOnlyGuard implements CanActivate {
     } else {
       // Optional: Redirect or just block
       console.warn('Blocked map route from server-side rendering.');
-      return false;
+      return true;
     }
   }
 }

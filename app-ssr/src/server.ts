@@ -14,6 +14,10 @@ import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { driverMap, setupDriverSockets } from './back-end/socket/driver-socket';
 
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
@@ -21,22 +25,6 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 connectDB();
-
-// API Routes - make sure these are defined first
-//app.use('/api/auth', authRoutes);
-//app.use('/api/users', userRoutes);
-
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
 
 /**
  * Serve static files from /browser
@@ -54,12 +42,17 @@ app.use(
  */
 app.use('/**', (req, res, next) => {
   angularApp
-    .handle(req)
+    .handle(req, {
+      providers: [
+        { provide: 'COOKIES', useValue: req.headers.cookie },
+      ]
+    })
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )
     .catch(next);
 });
+
 
 // Json Body
 app.use(express.json());
@@ -68,6 +61,18 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
+app.get('/api/maptiller/:resource', async (req, res) => {
+  const resource = req.params.resource;
+  const url = `https://api.maptiler.com/maps/${resource}/style.json?key=${process.env['MAPTILER_KEY']}`;
+  
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro no proxy' });
+  }
+});
 /**
  * Start the server if this module is the main entry point.
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.

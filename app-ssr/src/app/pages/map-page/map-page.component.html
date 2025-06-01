@@ -1,25 +1,31 @@
 <div class="map-screen">
-    <div class="right-panel" [ngClass]="{'show': showRightSidebar}">
-        <app-driver-card 
-            *ngFor="let driver of drivers" 
-            class="d-flex align-items-center justify-content-center"
-            [driver]="driver"
-            (click)="focusOnDriver(driver)"
-        ></app-driver-card>
+  <div class="right-panel" [ngClass]="{'show': showRightSidebar}">
+    @for (driver of drivers; track driver) {
+      <app-driver-card
+        class="d-flex align-items-center justify-content-center"
+        [driver]="driver"
+        (click)="focusOnDriver(driver)"
+      ></app-driver-card>
+    }
 
-        <div class="hide-show-btn" (click)="showRightSidebar = !showRightSidebar">
-            <div *ngIf="!showRightSidebar">&lt;&lt;</div>
-            <div *ngIf="showRightSidebar">&gt;&gt;</div>
-        </div>
+    <div class="hide-show-btn" (click)="showRightSidebar = !showRightSidebar">
+      @if (!showRightSidebar) {
+        <div>&lt;&lt;</div>
+      }
+      @if (showRightSidebar) {
+        <div>&gt;&gt;</div>
+      }
     </div>
+  </div>
 
+  @if (selectedDriver) {
     <app-driver-modal
-        *ngIf="selectedDriver"
-        [data]="selectedDriver"
-        (cancel)="selectedDriver = null"
-        (save)="onSaveDriver($event)"
+      [data]="selectedDriver"
+      (cancel)="selectedDriver = null"
+      (save)="onSaveDriver($event)"
     ></app-driver-modal>
+  }
 
-    <div id="map"></div>
+  <div id="map"></div>
 </div>
 

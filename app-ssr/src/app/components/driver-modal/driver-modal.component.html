@@ -10,12 +10,12 @@
 
       <!-- RIGHT: Form fields -->
       <div class="form-box">
-          <ng-container *ngFor="let key of objectKeys(data)">
-              <input-component 
-                [label]="key | titlecase" 
-                [value]="data[key]" 
-                (valueChange)="data[key] = $event"></input-component>
-          </ng-container>
+        @for (key of objectKeys(data); track key) {
+          <input-component
+            [label]="key | titlecase"
+            [value]="data[key]"
+          (valueChange)="data[key] = $event"></input-component>
+        }
 
         <div class="actions">
           <button class="delete" (click)="delete.emit()">DELETE</button>

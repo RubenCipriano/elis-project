@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { CommonModule } from "@angular/common";
+
 import { NavbarModule } from "../../components/navbar-component/navbar.module";
 import { PrimaryButtonModule } from "../../components/primary-button-component/primary-button.module";
 import { AuthService } from "../../services/auth.service";
@@ -13,7 +13,7 @@ import { InputComponent } from "../../components/input-component/input.component
     templateUrl: './login-page.component.html',
     styleUrls: ['login-page.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule,NavbarModule, InputComponent, PrimaryButtonModule]
+    imports: [FormsModule, NavbarModule, InputComponent, PrimaryButtonModule]
 })
 
 export class LoginPageComponent {

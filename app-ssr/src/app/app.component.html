@@ -1,5 +1,7 @@
 <div class="app-container">
-  <navbar-component *ngIf="isLogged"></navbar-component>
+  @if (isLogged) {
+    <navbar-component></navbar-component>
+  }
 
   <div class="router-container">
     <router-outlet></router-outlet>

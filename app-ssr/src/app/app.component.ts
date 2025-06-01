@@ -1,24 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
-import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs';
+
 import { NavbarModule } from "./components/navbar-component/navbar.module";
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [CommonModule, RouterOutlet, NavbarModule]
+  imports: [RouterOutlet, NavbarModule]
 })
 
 export class AppComponent {
   isLogged = false;
 
-  constructor(private authService: AuthService) {
-    this.authService.user$.pipe(filter(value => value !== null)).subscribe(() => {
+  constructor(private authService: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {
+
+    if(isPlatformBrowser(platformId)) {
       this.isLogged = this.authService.isAuthenticated();
-    });
+      
+      console.log("isLogged", this.isLogged)
+    }
   }
 }
 

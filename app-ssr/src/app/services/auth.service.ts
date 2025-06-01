@@ -2,7 +2,7 @@ import { Injectable, Inject, PLATFORM_ID, Optional, REQUEST } from '@angular/cor
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
-import { Request } from 'express';
+import { RequestContextService } from './request-context.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +14,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
+    private requestContextService: RequestContextService,
     @Inject(PLATFORM_ID) private platformId: Object,
-    @Optional() @Inject(REQUEST) private request: Request // for SSR only
   ) {
     const token = this.getToken();
     this.userSubject.next(!!token);
@@ -60,12 +60,11 @@ export class AuthService {
       return this.getCookie(this.tokenKey);
     }
 
-    console.log(this.request.header("cookie"))
-    console.log(this.request.rawHeaders)
+    const cookieKey = this.requestContextService.grabFromContext('COOKIES') as string;
 
     // SSR - read from request cookie header
-    if (this.request?.headers?.cookie) {
-      const cookies = this.request.headers.cookie.split(';');
+    if (cookieKey) {
+      const cookies = cookieKey.split(';');
       const tokenCookie = cookies.find(c => c.trim().startsWith(`${this.tokenKey}=`));
       if (tokenCookie) {
         return tokenCookie.split('=')[1];
