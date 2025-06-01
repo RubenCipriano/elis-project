@@ -86,7 +86,11 @@ export class MapPageComponent implements OnInit, AfterViewInit {
         container: 'map',
         style: '/api/maptiller/streets',
         center: [-9.1399, 38.7169],
-        zoom: 14
+        zoom: 14,
+        pitchWithRotate: false,   // Disable pitch with rotate gesture
+        dragRotate: false,        // Disable drag rotation with mouse
+        touchPitch: false,        // Disable pitch on touch devices
+        keyboard: false           // Optional: disable keyboard rotation
       });
 
       this.map.on('load', () => {
