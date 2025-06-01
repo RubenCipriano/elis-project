@@ -13,6 +13,8 @@ import { DriverModalComponent } from '../../components/driver-modal/driver-modal
 import { Driver } from '../../interfaces/driver.interface';
 import { DriverSocketService } from '../../services/driver-socket.service';
 
+import type { Map as MapLibreMap, Marker, default as MapLibreGL } from 'maplibre-gl';
+
 @Component({
   selector: 'app-map-page',
   standalone: true,
@@ -21,12 +23,12 @@ import { DriverSocketService } from '../../services/driver-socket.service';
   styleUrls: ['./map-page.component.scss']
 })
 export class MapPageComponent implements OnInit, AfterViewInit {
-  map: any;
-  maplibregl: any;
+  map!: MapLibreMap;
+  maplibregl!: typeof MapLibreGL;
   drivers: Driver[] = [];
-  selectedDriver: any = null;
+  selectedDriver: Driver | null = null;
   showRightSidebar = true;
-  markers: { [key: string]: any } = {};
+  markers: Record<string, Marker> = {};
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -35,72 +37,87 @@ export class MapPageComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.driverSocketService.drivers$.subscribe(newDrivers => {
-        const updatedIds = new Set();
+    if (!isPlatformBrowser(this.platformId)) return;
 
-        newDrivers.forEach(driver => {
-          updatedIds.add(driver.driverId);
+    this.driverSocketService.drivers$.subscribe(newDrivers => {
+      const updatedIds = new Set<string>();
+      const newDriversMap = new Map(newDrivers.map(d => [d.driverId, d]));
 
-          if (this.markers[driver.driverId]) {
-            // Update marker
-            const marker = this.markers[driver.driverId];
-            marker.setLngLat([driver.position.lng, driver.position.lat]);
+      // Update markers and drivers list
+      const updatedDrivers: Driver[] = [];
+
+      newDrivers.forEach(driver => {
+        updatedIds.add(driver.driverId);
+
+        if (this.markers[driver.driverId]) {
+          // Update existing marker position
+          this.markers[driver.driverId].setLngLat([driver.position.lng, driver.position.lat]);
+
+          // Update driver in drivers array (if exists)
+          const existingDriverIndex = this.drivers.findIndex(d => d.driverId === driver.driverId);
+          if (existingDriverIndex !== -1) {
+            this.drivers[existingDriverIndex] = driver;
           } else {
-            // Create new marker
-            const el = document.createElement('div');
-            el.className = 'driver-marker';
-
-            el.addEventListener('click', () => {
-              this.ngZone.run(() => this.focusOnDriver(driver, true));
-            });
-
-            const marker = new this.maplibregl.Marker(el)
-              .setLngLat([driver.position.lng, driver.position.lat])
-              .addTo(this.map);
-
-            this.markers[driver.driverId] = marker;
             this.drivers.push(driver);
           }
-        });
+        } else {
+          // Create new marker
+          const popup = new this.maplibregl.Popup()
+            .setText(driver.name || 'Unknown Driver');
 
-        // Clean up removed markers
-        this.drivers = this.drivers.filter(driver => {
-          const exists = updatedIds.has(driver.driverId);
-          if (!exists) {
-            this.markers[driver.driverId]?.remove();
-            delete this.markers[driver.driverId];
-          }
-          return exists;
-        });
+          const marker = new this.maplibregl.Marker()
+            .setLngLat([driver.position.lng, driver.position.lat])
+            .setPopup(popup)
+            .addTo(this.map);
+
+          popup.on('open', () => {
+            this.ngZone.run(() => this.focusOnDriver(driver, true));
+          });
+
+          this.markers[driver.driverId] = marker;
+          this.drivers.push(driver);
+        }
+
+        updatedDrivers.push(driver);
       });
-    }
+
+      // Remove markers and drivers not in newDrivers
+      this.drivers = this.drivers.filter(driver => {
+        const stillExists = updatedIds.has(driver.driverId);
+        if (!stillExists) {
+          this.markers[driver.driverId]?.remove();
+          delete this.markers[driver.driverId];
+        }
+        return stillExists;
+      });
+
+      // Replace the drivers array reference to trigger change detection
+      this.drivers = [...updatedDrivers];
+    });
   }
 
-  async ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      const maplibregl = await import('maplibre-gl');
-      this.maplibregl = maplibregl.default; // <- aqui
 
-      this.map = new this.maplibregl.Map({
-        container: 'map',
-        style: '/api/maptiller/streets',
-        center: [-9.1399, 38.7169],
-        zoom: 14,
-        pitchWithRotate: false,   // Disable pitch with rotate gesture
-        dragRotate: false,        // Disable drag rotation with mouse
-        touchPitch: false,        // Disable pitch on touch devices
-        keyboard: false           // Optional: disable keyboard rotation
-      });
+  async ngAfterViewInit(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
 
-      this.map.on('load', () => {
-        this.map.resize();
-      });
-    }
+    const maplibregl = await import('maplibre-gl');
+    this.maplibregl = maplibregl.default;
+
+    this.map = new this.maplibregl.Map({
+      container: 'map',
+      style: '/api/maptiller/streets',
+      center: [-9.1399, 38.7169],
+      zoom: 14,
+      pitchWithRotate: false,
+      dragRotate: false,
+      touchPitch: false,
+      keyboard: false
+    });
+
+    this.map.on('load', () => this.map.resize());
   }
 
-
-  focusOnDriver(driver: any, openModal: boolean = false) {
+  focusOnDriver(driver: Driver, openModal: boolean = false): void {
     if (openModal) this.selectedDriver = driver;
 
     this.map.flyTo({
@@ -109,10 +126,12 @@ export class MapPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onSaveDriver(driver: any) {
-    const index = this.drivers.findIndex(d => d.driverId === driver.id);
+  onSaveDriver(updatedDriver: any): void {
+    updatedDriver = updatedDriver as Driver;
+    
+    const index = this.drivers.findIndex(d => d.driverId === updatedDriver.driverId);
     if (index !== -1) {
-      this.drivers[index] = driver;
+      this.drivers[index] = updatedDriver;
     }
     this.selectedDriver = null;
   }

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:elis_courier/screens/dashboard_screen.dart';
+import 'package:elis_courier/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login_screen.dart';

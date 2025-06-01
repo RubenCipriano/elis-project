@@ -1,7 +1,7 @@
 import 'package:elis_courier/component/ElisIcon.dart';
 import 'package:elis_courier/component/ElisInputField.dart';
 import 'package:elis_courier/modules/requests.dart';
-import 'package:elis_courier/screens/dashboard_screen.dart';
+import 'package:elis_courier/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

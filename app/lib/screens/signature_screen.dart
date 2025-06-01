@@ -1,6 +1,6 @@
 import 'package:elis_courier/component/ElisNavbar.dart';
 import 'package:elis_courier/component/ElisSignButton.dart';
-import 'package:elis_courier/screens/dashboard_screen.dart';
+import 'package:elis_courier/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart'; // Pacote de assinatura
 

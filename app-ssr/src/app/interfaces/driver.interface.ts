@@ -1,10 +1,12 @@
+import { CircleMarker } from "leaflet";
+
 export interface DriverPosition {
   lat: number;
   lng: number;
 }
 
 export interface Driver {
-  driverId: number | string;
+  driverId: string;
   position: DriverPosition;
   status?: 'available' | 'onRoute' | 'offline' | string; // optional, flexible
   vehicle?: string; // optional
@@ -13,5 +15,5 @@ export interface Driver {
   totalServices?: number;
   servicesCompleted?: number;
   timestamp?: number; // optional: epoch for update time
-  marker?: L.CircleMarker; // optional: Leaflet marker or similar object
+  marker?: CircleMarker; // optional: Leaflet marker or similar object
 }

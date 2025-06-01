@@ -5,7 +5,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { MapPageComponent } from './pages/map-page/map-page.component';
 
 export const routes: Routes = [
-    {path: '', redirectTo: 'dashboard'},
+    {path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardPageComponent, canActivate: [AuthGuard]  },
     { path: 'login', component: LoginPageComponent  },
     { path: 'map', canActivate: [AuthGuard], component: MapPageComponent }
