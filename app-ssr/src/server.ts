@@ -24,7 +24,7 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-//connectDB();
+connectDB();
 
 /**
  * Serve static files from /browser
@@ -58,8 +58,8 @@ app.use('/**', (req, res, next) => {
 app.use(express.json());
 
 // Define API routes here (after JSON middleware)
-//app.use('/api/auth', authRoutes);
-//app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/api/maptiller/:resource', async (req, res) => {
   const resource = req.params.resource;
