@@ -13,7 +13,7 @@ export class DriverSocketService {
   public drivers$ = this.driversSubject.asObservable();
 
   constructor() {
-    this.socket = io('http://localhost:4000'); // replace with your real endpoint
+    this.socket = io('/'); // replace with your real endpoint
 
     // Register as dashboard
     this.socket.emit('register', 'dashboard');
