@@ -14,8 +14,10 @@ export function setupDriverSockets(io: Server) {
         if (role === 'driver') {
           driverMap.set(socket, {});
           console.log("Registered DRIVER:", socket.id);
+          
         } else if (role === 'dashboard') {
           dashboardSockets.add(socket);
+
           console.log("Registered DASHBOARD:", socket.id);
 
           // Immediately push initial data to dashboard

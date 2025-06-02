@@ -71,7 +71,7 @@ class LocationService {
 
   static void _initializeSocket() {
     _socket = IO.io(
-      'http://5.249.164.180',
+      'https://elis.rubencipriano.top',
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()

@@ -45,7 +45,6 @@ export class MapPageComponent implements OnInit, AfterViewInit {
 
       // Update markers and drivers list
       const updatedDrivers: Driver[] = [];
-
       newDrivers.forEach(driver => {
         updatedIds.add(driver.driverId);
 

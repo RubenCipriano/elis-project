@@ -17,9 +17,10 @@ export class AppComponent {
 
   constructor(private authService: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {
 
-    this.isLogged = this.authService.isAuthenticated();
+    this.authService.user$.subscribe((isLogged: boolean | null) => {
+      this.isLogged = isLogged || false;
+    });
     
-    console.log("isLogged", this.isLogged)
   }
 }
 
