@@ -17,11 +17,9 @@ export class AppComponent {
 
   constructor(private authService: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {
 
-    if(isPlatformBrowser(platformId)) {
-      this.isLogged = this.authService.isAuthenticated();
-      
-      console.log("isLogged", this.isLogged)
-    }
+    this.isLogged = this.authService.isAuthenticated();
+    
+    console.log("isLogged", this.isLogged)
   }
 }
 
